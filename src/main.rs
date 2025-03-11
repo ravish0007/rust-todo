@@ -9,6 +9,8 @@ use axum::{
 use serde::Deserialize;
 use rinja_axum::Template;
 use sqlx::{sqlite::SqlitePoolOptions, Pool, Sqlite, SqlitePool, FromRow};
+use tower_livereload::LiveReloadLayer;
+
 
 
 
@@ -75,7 +77,9 @@ async fn main() {
             .delete(delete)
 
 
-        ).with_state(conn);
+        ).with_state(conn).layer(LiveReloadLayer::new())
+
+    ;
 
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000")

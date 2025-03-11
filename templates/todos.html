@@ -1,106 +1,152 @@
 <html>
-  <!-- <link -->
-  <!--   rel="stylesheet" -->
-  <!--   href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css" -->
-  <!--   integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" -->
-  <!--   crossorigin="anonymous" -->
-  <!-- /> -->
-  <!-- Minified version -->
-  <!-- <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css" /> -->
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
     <title>Todos</title>
+
+    <style>
+      .checkbox-container {
+        display: flex;
+        align-items: center;
+      }
+
+      .rounded-checkbox {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        border: 2px solid #d1d5db;
+        background-color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+
+      .checkmark {
+        color: oklch(0.685 0.169 237.323);
+        width: 24px;
+        height: 24px;
+      }
+
+      .checkbox-label {
+        margin-left: 8px;
+        color: #374151;
+      }
+    </style>
+
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".delete-btn").forEach((button) => {
+          button.addEventListener("click", function () {
+            const todoId = this.dataset.id;
+            sendFormData(`/`, "DELETE", { id: parseInt(todoId) }).then(
+              () => {}
+            );
+          });
+        });
+
+        document.querySelectorAll(".rounded-checkbox").forEach((button) => {
+          button.addEventListener("click", function (event) {
+            event.stopPropagation();
+
+            const dataset =
+              event.currentTarget.parentElement.parentElement.dataset;
+
+            const todoId = dataset.id;
+            const isDone = dataset.done;
+
+            sendFormData(`/`, "PUT", {
+              id: parseInt(todoId),
+              done: isDone == "true" ? false : true,
+            }).then(() => {});
+          });
+        });
+
+        document
+          .getElementById("content")
+          .addEventListener("keypress", function (event) {
+            if (event.key === "Enter") {
+              event.preventDefault(); // Prevent default form submission
+
+              if (event.target.value.trim() != "") {
+                document.getElementById("newtodo-form").submit(); // Submit the form
+              }
+            }
+          });
+      });
+
+      async function sendFormData(url, method, data) {
+        let response = await fetch(url, {
+          method: method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+
+        window.location.reload();
+      }
+    </script>
   </head>
 
-  <body class="">
-    <div class="px-4 md:w-1/2 mx-auto bg-gray-50 h-screen">
-      <p class="text-bold text-5xl text-center">Todos</p>
+  <body class="bg-zinc-50">
+    <div class="px-4 md:w-1/2 mx-auto h-screen">
+      <p class="text-bold mt-5 text-5xl text-center text-sky-500">Todos</p>
 
-      <div class="flex justify-center mt-10">
-        <form action="/" method="post">
+      <div class="border border-sky-200 w-full mt-10 shadow-lg">
+        <form id="newtodo-form" class="w-full" action="/" method="post">
           <input
-            class="bg-gray-100 p-1 text-lg border-2 border-gray-400 rounded-lg outline-none"
+            class="placeholder-shown:italic w-full px-8 py-4 p-1 text-lg outline-sky-500"
+            autocomplete="off"
             type="text"
             id="content"
             placeholder="Maybe a drink?..."
-            required
             name="content"
           />
-          <button
-            class="ml-4 px-4 py-1 text-lg bg-gray-700 rounded-sm border border-black rounded text-gray-200 hover:text-gray-700 hover:bg-gray-500 hover:border-gray-500"
-            type="submit"
-          >
-            +
-          </button>
         </form>
-      </div>
 
-      <div class="mt-10 mx-auto w-1/2">
-        <div class="flex flex-col gap-4">
+        <div class="flex flex-col">
           {% for todo in todos %}
 
-          <div>
-            <div class="flex align-center justify-center items-center">
-              <p
-                class="update italic cursor-pointer {% if todo.done %} text-select-none text-gray-400 line-through {% endif %} text-xl"
-                data-done="{{todo.done}}"
-                data-id="{{todo.id}}"
-                id="{{todo.id}}"
-              >
-                {{ todo.content }}
-              </p>
+          <div class="py-2 px-4 border-t-1 border-sky-200">
+            <div
+              class="flex flex-row justify-between py-2 px-2"
+              data-id="{{todo.id}}"
+              data-content="{{todo.content}}"
+              data-done="{{todo.done}}"
+            >
+              <div class="flex gap-4">
+                <button class="rounded-checkbox">
+                  <svg
+                    class="checkmark {% if todo.done == false %} hidden {% endif %}"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </button>
+
+                <p
+                  class="italic cursor-pointer {% if todo.done %} text-select-none text-gray-400 line-through {% endif %} text-xl"
+                >
+                  {{ todo.content }}
+                </p>
+              </div>
 
               <p
-                class="ml-10 text-red-500 text-xl cursor-pointer delete-btn"
+                class="ml-10 text-gray-500 hover:text-red-500 text-xl cursor-pointer delete-btn"
                 data-id="{{todo.id}}"
               >
                 X
               </p>
-
-              <p></p>
             </div>
           </div>
           {% endfor %}
-
-          <script>
-            document.addEventListener("DOMContentLoaded", function () {
-              document.querySelectorAll(".delete-btn").forEach((button) => {
-                button.addEventListener("click", function () {
-                  console.log(this.dataset);
-                  const todoId = this.dataset.id;
-                  sendFormData(`/`, "DELETE", { id: parseInt(todoId) }).then(
-                    () => {}
-                  );
-                });
-              });
-            });
-
-            document.addEventListener("DOMContentLoaded", function () {
-              document.querySelectorAll(".update").forEach((button) => {
-                button.addEventListener("click", function () {
-                  const todoId = this.dataset.id;
-                  const isDone = this.dataset.done;
-                  sendFormData(`/`, "PUT", {
-                    id: parseInt(todoId),
-                    done: isDone == "true" ? false : true,
-                  }).then(() => {});
-                });
-              });
-            });
-
-            async function sendFormData(url, method, data) {
-              let response = await fetch(url, {
-                method: method,
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify(data),
-              });
-
-              window.location.reload();
-            }
-          </script>
         </div>
       </div>
     </div>
