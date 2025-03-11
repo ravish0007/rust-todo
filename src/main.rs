@@ -41,6 +41,7 @@ pub struct NewTodo {
 #[derive(Deserialize)]
 pub struct UpdateTodo {
     pub done: bool,
+    pub content: String,
     pub id: ID,
 }
 
@@ -138,8 +139,9 @@ async fn new(State(db): State<SqlitePool>, Form(todo): Form<NewTodo>) -> Result<
 async fn update( State(db): State<SqlitePool>, Json(todo): Json<UpdateTodo>) -> Result<impl IntoResponse, AppError> {
 
 
-    let res = sqlx::query("UPDATE todos set done = (?) where id = (?)")
+    let res = sqlx::query("UPDATE todos set done = (?), content = (?) where id = (?)")
     .bind(todo.done)
+    .bind(todo.content)
     .bind(todo.id)
     .execute(&db)
     .await;

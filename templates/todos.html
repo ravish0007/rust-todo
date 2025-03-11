@@ -54,16 +54,63 @@
 
             const todoId = dataset.id;
             const isDone = dataset.done;
+            const content = dataset.content;
 
             sendFormData(`/`, "PUT", {
               id: parseInt(todoId),
+              content: content,
               done: isDone == "true" ? false : true,
             }).then(() => {});
           });
         });
 
+
+        document.querySelectorAll(".content").forEach((content) => {
+          content.addEventListener("dblclick", function (event) {
+
+            event.currentTarget.classList.toggle("hidden")
+            const input = event.currentTarget.nextElementSibling
+            input.classList.toggle("hidden")
+            input.focus()
+            const length = input.value.length
+            input.setSelectionRange(length, length); // Move cursor to the end
+          });
+        });
+
+
+        document.querySelectorAll(".content-input").forEach((content) => {
+          content.addEventListener("keypress", function (event) {
+            event.stopPropagation();
+
+            if (event.key === "Enter" && event.target.value.trim() != '') {
+              const dataset = event.target.parentElement.dataset;
+
+              const todoId = dataset.id;
+              const isDone = dataset.done;
+              const content = event.target.value;
+
+
+              sendFormData(`/`, "PUT", {
+                id: parseInt(todoId),
+                content: content,
+                done: isDone == "true" ? true : false,
+              }).then(() => {});
+
+            }
+
+          });
+        });
+
+
+        document.querySelectorAll(".content-input").forEach((content) => {
+          content.addEventListener("blur", function (event) {
+            event.currentTarget.classList.toggle('hidden')
+            event.currentTarget.previousElementSibling.classList.toggle('hidden')
+          });
+        });
+
         document
-          .getElementById("content")
+          .getElementById("newcontent")
           .addEventListener("keypress", function (event) {
             if (event.key === "Enter") {
               event.preventDefault(); // Prevent default form submission
@@ -83,7 +130,6 @@
           },
           body: JSON.stringify(data),
         });
-
         window.location.reload();
       }
     </script>
@@ -94,61 +140,77 @@
       <p class="text-bold mt-5 text-5xl text-center text-sky-500">Todos</p>
 
       <div class="border border-sky-200 w-full mt-10 shadow-lg">
-        <form id="newtodo-form" class="w-full" action="/" method="post">
+        <form id="newtodo-form" class="w-full flex" action="/" method="post">
           <input
-            class="placeholder-shown:italic w-full px-8 py-4 p-1 text-lg outline-sky-500"
+            class="placeholder-shown:italic px-8 w-full py-4 p-1 text-lg outline-sky-500"
             autocomplete="off"
             type="text"
-            id="content"
+            id="newcontent"
             placeholder="Maybe a drink?..."
             name="content"
           />
+
+          <button
+            type="submit"
+            class="cursor-pointer text-2xl bg-sky-500 text-white px-4 hover:bg-sky-300"
+          >
+            +
+          </button>
         </form>
 
         <div class="flex flex-col">
           {% for todo in todos %}
 
-          <div class="py-2 px-4 border-t-1 border-sky-200">
+          <div class="border-t-1 border-sky-200">
             <div
-              class="flex flex-row justify-between py-2 px-2"
+              class="flex flex-row justify-between "
               data-id="{{todo.id}}"
               data-content="{{todo.content}}"
               data-done="{{todo.done}}"
             >
-              <div class="flex gap-4">
-                <button class="rounded-checkbox">
-                  <svg
-                    class="checkmark {% if todo.done == false %} hidden {% endif %}"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  >
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                  </svg>
-                </button>
+                <div class="my-4 ml-6">
+                  <button class="rounded-checkbox">
+                    <svg
+                      class="checkmark {% if todo.done == false %} hidden {% endif %}"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    >
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                  </button>
+                </div>
 
-                <p
-                  class="italic cursor-pointer {% if todo.done %} text-select-none text-gray-400 line-through {% endif %} text-xl"
+                <span
+                  class="content break-words italic py-4  cursor-pointer w-3xl {% if todo.done %} text-select-none text-gray-400 line-through {% endif %} text-xl"
                 >
                   {{ todo.content }}
-                </p>
+                </span>
+
+                <input
+                  class="hidden content-input italic ml-4 pl-2 cursor-pointer w-full  text-xl outline-sky-500"
+                  value="{{todo.content}}"
+                  type=text
+                >
+                </input>
+
+
+            <span
+              class="px-4 py-4 text-gray-500 hover:text-red-500 text-xl cursor-pointer delete-btn"
+              data-id="{{todo.id}}"
+            >
+              X
+            </span>
+
               </div>
 
-              <p
-                class="ml-10 text-gray-500 hover:text-red-500 text-xl cursor-pointer delete-btn"
-                data-id="{{todo.id}}"
-              >
-                X
-              </p>
             </div>
-          </div>
           {% endfor %}
         </div>
-      </div>
     </div>
   </body>
 </html>
