@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+}
+
+.rounded-checkbox {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid #d1d5db;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.checkmark {
+  /* color: oklch(0.685 0.169 237.323); */
+
+  width: 24px;
+  height: 24px;
+  @apply text-green-500;
+}
+
+.checkbox-label {
+  margin-left: 8px;
+  color: #374151;
+}
