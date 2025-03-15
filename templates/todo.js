@@ -5,15 +5,26 @@ const toggleNoteEdit = (noteElement) => {
     return;
   }
 
+  const noteEnclosingElement = noteElement.firstElementChild;
   const content = noteElement.querySelector(".content");
   const contentInput = noteElement.querySelector(".content-input");
   const updateButton = noteElement.querySelector(".update-btn");
+  const deleteButton = noteElement.querySelector(".delete-btn");
   const saveButton = noteElement.querySelector(".save-btn");
+  const cancelButton = noteElement.querySelector(".cancel-btn");
 
-  content.classList.toggle("hidden");
-  contentInput.classList.toggle("hidden");
-  updateButton.classList.toggle("hidden");
-  saveButton.classList.toggle("hidden");
+  noteEnclosingElement.classList.toggle("border-transparent");
+  noteEnclosingElement.classList.toggle("border-sky-500");
+  for (const element of [
+    content,
+    contentInput,
+    updateButton,
+    saveButton,
+    deleteButton,
+    cancelButton,
+  ]) {
+    element.classList.toggle("hidden");
+  }
 
   if (!contentInput.classList.contains("hidden")) {
     contentInput.focus();
@@ -36,6 +47,14 @@ document.addEventListener("DOMContentLoaded", function () {
       toggleNoteEdit(currentEditingElement);
       currentEditingElement = event.target.closest(".note-root");
       toggleNoteEdit(event.target.closest(".note-root"));
+    });
+  });
+
+  document.querySelectorAll(".cancel-btn").forEach((content) => {
+    content.addEventListener("click", function (event) {
+      event.stopPropagation();
+      toggleNoteEdit(currentEditingElement);
+      currentEditingElement = null;
     });
   });
 
@@ -76,12 +95,12 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-  document.querySelectorAll(".content").forEach((content) => {
-    content.addEventListener("dblclick", function (event) {
-      event.stopPropagation();
-      toggleNoteEdit(event.currentTarget.closest(".note-root"));
-    });
-  });
+  // document.querySelectorAll(".content").forEach((content) => {
+  //   content.addEventListener("dblclick", function (event) {
+  //     event.stopPropagation();
+  //     toggleNoteEdit(event.currentTarget.closest(".note-root"));
+  //   });
+  // });
 
   document.querySelectorAll(".content-input").forEach((content) => {
     content.addEventListener("keypress", function (event) {
@@ -109,6 +128,30 @@ document.addEventListener("DOMContentLoaded", function () {
   //     toggleNoteEdit(event.target.closest(".note-root"));
   //   });
   // });
+
+  document
+    .getElementById("newcontent")
+    .addEventListener("focus", function (event) {
+      document
+        .getElementById("newtodo-form")
+        .classList.toggle("border-transparent");
+
+      document
+        .getElementById("newtodo-form")
+        .classList.toggle("border-sky-500");
+    });
+
+  document
+    .getElementById("newcontent")
+    .addEventListener("blur", function (event) {
+      document
+        .getElementById("newtodo-form")
+        .classList.toggle("border-transparent");
+
+      document
+        .getElementById("newtodo-form")
+        .classList.toggle("border-sky-500");
+    });
 
   document
     .getElementById("newcontent")
