@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 axum = { version = "0.8.1" }
+async-trait = "0.1.88"
 rinja_axum = "0.3.5"
 serde = { version = "1.0", features = ["derive"] }
 tokio = { version = "1.0", features = ["full"] }
@@ -13,6 +14,13 @@ displaydoc = {version = "0.2"}
 sqlx = { version = "0.8", features = [ "runtime-tokio", "sqlite" ] }
 tower-livereload="0.9.6"
 axum-cookie = "0.2.3"
+time = "0.3.30"
+axum-login = "0.17.0"
+password-auth = "1.0.0"
+tower-sessions = { version = "0.14.0", default-features = false, features = [
+  "signed",
+] }
+tower-sessions-sqlx-store = { version = "0.15.0", features = ["sqlite"] }
 
 
 # [target.x86_64-unknown-linux-gnu]

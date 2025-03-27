@@ -1,19 +1,20 @@
 <style>
-  {% include "todo.css" %}
+    {% include "todo.css" %}
 </style>
 
 <div
-  class="mt-10 w-full md:w-1/2 border-2 px-4 py-2 text-sky-500 border-sky-500 mx-auto text-sky-500 rounded-md"
+    class="mt-10 w-full md:w-1/2 border-2 px-4 py-2 text-sky-500 border-sky-500 mx-auto text-sky-500 rounded-md"
 >
-  <h1>
-    {%- match error -%} {% when AppError::NotFound -%} 404: Not Found {% else
-    -%} 500: Internal Server Error {%- endmatch -%}
-  </h1>
+    <h1>
+        {%- match error -%} {% when AppError::NotFound -%} 404: Not Found {%
+        when AppError::UserAlreadyExist -%} 409: Username Taken {% else -%} 500:
+        Internal Server Error {%- endmatch -%}
+    </h1>
 
-  <a href="/" class="underline text-black">Head Home</a>
+    {%- match error -%} {% when AppError::NotFound -%} {% when
+    AppError::UserAlreadyExist -%} {% when AppError::Render(error_message) -%}
+    <pre>{{ error_message }}</pre>
+    {%- endmatch -%}
+
+    <a href="/" class="underline text-black">Head Home</a>
 </div>
-
-{%- match error -%} {% when AppError::NotFound -%} {% when
-AppError::Render(error_message) -%}
-<pre>{{ error_message }}</pre>
-{%- endmatch -%}

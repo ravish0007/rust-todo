@@ -16,7 +16,17 @@
 
   <body class="bg-zinc-50">
     <div class="px-4 md:w-1/2 mx-auto h-screen">
-      <p class="text-bold mt-5 text-5xl text-center text-sky-500">Todos</p>
+      <div class="flex justify-between">
+        <div></div>
+        <p class="text-bold mt-5 text-5xl text-center text-sky-500">Todos</p>
+        <div>
+          <form class="mt-5" action="/logout">
+            <button type="submit" class="text-gray-500 hover:underline">
+              Log Out
+            </button>
+          </form>
+        </div>
+      </div>
 
       <div class="border border-sky-200 w-full mt-10 shadow-lg">
         <form

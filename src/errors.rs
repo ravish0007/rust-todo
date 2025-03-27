@@ -16,6 +16,8 @@ impl std::fmt::Display for MyCustomError {
 pub enum AppError {
     /// not found
     NotFound,
+    /// user already found in db
+    UserAlreadyExist,
     /// could not render template
     Render(#[from] rinja_axum::Error),
 }
@@ -30,6 +32,7 @@ impl IntoResponse for AppError {
 
         let status = match &self {
             AppError::NotFound => StatusCode::NOT_FOUND,
+            AppError::UserAlreadyExist => StatusCode::CONFLICT,
             AppError::Render(_) => StatusCode::INTERNAL_SERVER_ERROR,
         };
 

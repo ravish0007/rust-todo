@@ -1,3 +1,4 @@
+// use crate::users::User;
 use rinja_axum::Template;
 use serde::Deserialize;
 use sqlx::FromRow;
@@ -31,4 +32,5 @@ pub struct UpdateTodo {
 #[template(path = "todos.html")]
 pub struct Todos {
     pub todos: Vec<Todo>,
+    // pub user: User,
 }
